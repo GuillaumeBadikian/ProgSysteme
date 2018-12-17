@@ -7,7 +7,7 @@ int file_mess, mem_part, semap;
 
 int main(int argc, char * argv[], char ** envp){
   
-  sigset_t masque, masque_attente;
+  sigset_t masque;
 
   if(argc != 3){
     usage(argv[0]);
@@ -54,6 +54,8 @@ void creer_IPC(int argv1, int argv2){
     unsigned short val_init[1]={1};
     pid_t pid[argv1];
     int i;
+    char * argv_archiv[] = {"archiviste",NULL,NULL,NULL};
+    char arg1[50]; char arg2[50];
     
     if ((stat(FICHIER_CLE,&st) == -1) &&
 	(open(FICHIER_CLE, O_RDONLY | O_CREAT | O_EXCL, 0660) == -1)){
@@ -112,13 +114,17 @@ void creer_IPC(int argv1, int argv2){
     }
 
     /* creation des archivistes */
+    sprintf(arg1,"%i",argv1);
+    sprintf(arg2,"%i",argv2);
+    argv_archiv[1] = arg1;
+    argv_archiv[2] = arg2;
 
     for(i = 0; i< argv1;i++){
       pid[i] = fork();
       if(pid[i] == -1)
 	      break;
       if(pid[i] == 0){
-        //execve
+        execve("./archiviste",argv_archiv,NULL);
         fprintf(stderr,"Creation des archivistes\n");
         exit(-1);
       }
