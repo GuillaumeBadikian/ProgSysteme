@@ -2,10 +2,6 @@
 #include "archiviste.h"
 
 
-void usage (char *s){
-	printf("Usage : %s <nb_activistes> <nb_themes> \n",s);
-}
-
 int main (int argc, char *argv[]){
 
 key_t cle;
@@ -70,6 +66,10 @@ fprintf(stderr,"good\n");
 
 }
 
+
+void usage (char *s){
+	printf("Usage : %s <nb_activistes> <nb_themes> \n",s);
+}
 
 
 
