@@ -127,7 +127,7 @@ void creer_IPC(int argv1, int argv2){
     argv_archiv[1] = arg1;
     argv_archiv[2] = arg2;
 
-    /*for(i = 0; i< argv1;i++){
+    for(i = 0; i< argv1;i++){
       pid[i] = fork();
       if(pid[i] == -1)
 	      break;
@@ -138,7 +138,8 @@ void creer_IPC(int argv1, int argv2){
         
         exit(-1);
       }
-    }*/
+    }
+    sleep(0.5);
 
     /* on cree des journalistes indefiniment */
       while(1){
