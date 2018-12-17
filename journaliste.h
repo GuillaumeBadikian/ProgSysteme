@@ -1,5 +1,5 @@
-#ifndef _init_h_
-#define _init_h_
+#ifndef _journaliste_h_
+#define _journaliste_h_
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -16,15 +16,8 @@
 #include <signal.h>
 #include <time.h>
 
-#define FICHIER_CLE "cle.serv"
-#define LETTRE_CODE 'a'
-
-
 void usage(char * s);
-int arg_valid(int argv1, int  argv2);
-void creer_IPC(int argv1, int  argv2);
-void mon_sigaction(int signal, void (*f)(int));
-void arret(int i);
+
 
 
 
