@@ -1,0 +1,17 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+
+int main(int argc, char * argv[], char ** envp){
+  if(argc<3){
+    usage();
+    exit(-1);
+  }
+  
+}
+
+void usage(){
+
+  
+}
