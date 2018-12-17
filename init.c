@@ -6,8 +6,8 @@ int file_mess, mem_part, semap;
 
 
 int main(int argc, char * argv[], char ** envp){
-  
-  sigset_t masque, masque_attente;
+  srand(time(NULL));
+  sigset_t masque;
 
   if(argc != 3){
     usage(argv[0]);
@@ -28,8 +28,8 @@ int main(int argc, char * argv[], char ** envp){
   /* masque vide */
   sigemptyset(&masque);
   /* on ajoute ce que l'on ne veut pas */
-  sigaddset(&masque,SIGKILL);
-  sigaddset(&masque,SIGCHLD);
+//  sigaddset(&masque,SIGKILL);
+ // sigaddset(&masque,SIGCHLD);
   /* on bloque */
   sigprocmask(SIG_BLOCK,&masque,NULL);
 
@@ -53,8 +53,12 @@ void creer_IPC(int argv1, int argv2){
     int * tab;
     unsigned short val_init[1]={1};
     pid_t pid[argv1];
+    pid_t pid_journal;
     int i;
-    
+    int demande_archive;
+    int identite_journal = 10000;
+    char * argv_journal[] = {"journaliste",NULL,NULL,NULL, NULL};
+    char arg1[50]; char arg2[50];
     if ((stat(FICHIER_CLE,&st) == -1) &&
 	(open(FICHIER_CLE, O_RDONLY | O_CREAT | O_EXCL, 0660) == -1)){
       fprintf(stderr,"Pb creation fichier cle\n");
@@ -113,21 +117,55 @@ void creer_IPC(int argv1, int argv2){
 
     /* creation des archivistes */
 
-    for(i = 0; i< argv1;i++){
+    /*for(i = 0; i< argv1;i++){
       pid[i] = fork();
       if(pid[i] == -1)
 	      break;
       if(pid[i] == 0){
         //execve
         fprintf(stderr,"Creation des archivistes\n");
+        execve("./journaliste",argv_journal,NULL);
+        
         exit(-1);
       }
-    }
-
+    }*/
 
     /* on cree des journalistes indefiniment */
       while(1){
-         //kill(pid[0],SIGUSR1);
+        pid_journal = fork();
+        if(pid_journal==-1){
+           //error
+        } 
+        if(pid_journal==0){
+            sprintf(arg1,"%i",identite_journal);
+            argv_journal[1] = arg1;
+            sprintf(arg2,"%i",argv1);
+            argv_journal[2] = arg2;
+            if(demande_archive==0){ //effacement
+                argv_journal[3] = "e";
+                execve("./journaliste",argv_journal,NULL);
+            }
+            else if(demande_archive<3){ // publication
+              argv_journal[3] = "p";
+              execve("./journaliste",argv_journal,NULL);
+            }
+            else { //consultation
+              argv_journal[3] = "c";
+              execve("./journaliste",argv_journal,NULL);
+            }
+            exit(-1);
+        }
+        else{
+          demande_archive = rand()%(10);
+
+            /* test valeur identite */
+          if(identite_journal<20000)
+              identite_journal+=1;
+            else
+              identite_journal= 10000;
+        }
+         //fprintf(stderr,"fdgfdg\n");
+         sleep(1);
 	    }
 
 
@@ -138,7 +176,7 @@ void creer_IPC(int argv1, int argv2){
     semctl(semap,1,IPC_RMID,NULL);
     shmctl(mem_part,IPC_RMID,NULL);
     msgctl(file_mess,IPC_RMID, NULL);
-    
+     
   }
 
     
