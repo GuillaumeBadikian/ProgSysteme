@@ -7,7 +7,7 @@ int file_mess, mem_part, semap;
 
 int main(int argc, char * argv[], char ** envp){
   
-  //sigset_t masque, masque_attente;
+  sigset_t masque, masque_attente;
 
   if(argc != 3){
     usage(argv[0]);
@@ -19,17 +19,23 @@ int main(int argc, char * argv[], char ** envp){
     exit(-1);
   }
 
-   /* Masquage de tous les signaux */
-  /*sigfillset(&masque);
-  sigprocmask(SIG_SETMASK,&masque,NULL);
-*/
-  /* SIGUSR1 et SIGUSR2 demasques  */
-/*  sigfillset(&masque_attente);
-  sigdelset(&masque_attente,SIGUSR1);
-  sigdelset(&masque_attente,SIGUSR2);
-*/
   mon_sigaction(SIGUSR1, arret);
   mon_sigaction(SIGUSR2, arret);
+  mon_sigaction(SIGINT, arret);
+  mon_sigaction(SIGSTOP, arret);
+  mon_sigaction(SIGTSTP, arret);
+  
+  /* masque vide */
+  sigemptyset(&masque);
+  /* on ajoute ce que l'on ne veut pas */
+  sigaddset(&masque,SIGKILL);
+  sigaddset(&masque,SIGCHLD);
+  /* on bloque */
+  sigprocmask(SIG_BLOCK,&masque,NULL);
+
+  
+
+  
 
   /* on peut commencer
    * les parametres sont bons
@@ -160,7 +166,7 @@ void arret(int i ){
    semctl(semap,1,IPC_RMID,NULL);
    shmctl(mem_part,IPC_RMID,NULL);
    msgctl(file_mess,IPC_RMID, NULL);
-   //sleep(5);
+   sleep(1); // pour eviter de finir avant la suppression des IPCs
   // kill(getpid(),SIGKILL);
    exit(0);
 
