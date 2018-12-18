@@ -84,7 +84,7 @@ void creer_IPC(int argv1, int argv2){
       }
 
       /* On cree le SMP et on teste s'il existe deja :    */
-      mem_part = shmget(cle,NB_ARTICLE * sizeof(char[4]),IPC_CREAT | IPC_EXCL | 0660);
+      mem_part = shmget(cle,NB_ARTICLE * sizeof(int),IPC_CREAT | IPC_EXCL | 0660);
       if (mem_part==-1){
         printf("Pb creation SMP ou il existe deja\n");
         exit(-1);
@@ -135,9 +135,9 @@ void creer_IPC(int argv1, int argv2){
     }
 
     /* creation des archivistes */
-    sprintf(arg1,"%i",argv1);
+    //sprintf(arg1,"%i",argv1);
     sprintf(arg2,"%i",argv2);
-    argv_archiv[1] = arg1;
+   // argv_archiv[1] = arg1;
     argv_archiv[2] = arg2;
 
     for(i = 0; i< argv1;i++){
@@ -145,6 +145,8 @@ void creer_IPC(int argv1, int argv2){
       if(pid[i] == -1)
 	      break;
       if(pid[i] == 0){
+         sprintf(arg1,"%i",i+1);
+         argv_archiv[1] = arg1;
         execve("./archiviste",argv_archiv,NULL);
         fprintf(stderr,"Creation des archivistes\n");
        // execve("./journaliste",argv_journal,NULL);
@@ -153,8 +155,7 @@ void creer_IPC(int argv1, int argv2){
       }
 
     }
-    sleep(0.5);
-
+    sleep(1);
     /* on cree des journalistes indefiniment */
       while(1){
         pid_journal = fork();
@@ -162,14 +163,7 @@ void creer_IPC(int argv1, int argv2){
            //error
         } 
         if(pid_journal==0){
-            sprintf(arg1,"%i",identite_journal);
-            argv_journal[1] = arg1;
-            sprintf(arg2,"%i",argv1);
-            argv_journal[2] = arg2;
-            sprintf(arg4,"%i",rand()%(argv2));
-            argv_journal[4] = arg4;
-            sprintf(arg5,"%i",rand()%(NB_ARTICLE));
-            argv_journal[5] = arg5;
+            
 
             if(demande_archive==0){ //effacement
                 argv_journal[3] = "e";
@@ -187,7 +181,16 @@ void creer_IPC(int argv1, int argv2){
             exit(-1);
         }
         else{
-          demande_archive = rand()%(10);
+
+            sprintf(arg1,"%i",identite_journal);
+            argv_journal[1] = arg1;
+            sprintf(arg2,"%i",argv1);
+            argv_journal[2] = arg2;
+            sprintf(arg4,"%i",rand()%(argv2));
+            argv_journal[4] = arg4;
+            sprintf(arg5,"%i",rand()%(NB_ARTICLE));
+            argv_journal[5] = arg5;
+            demande_archive = rand()%(10);
 
             /* test valeur identite */
           if(identite_journal<20000)
@@ -253,7 +256,7 @@ void delete_smp(int nb_article,int nb_theme){
   for(int i=0; i< nb_theme;i++){
       cle= ftok(FICHIER_CLE,i);
 
-    shmctl(shmget(cle,nb_article * sizeof(char[4]),0666),IPC_RMID,NULL);
+    shmctl(shmget(cle,nb_article * sizeof(int),0666),IPC_RMID,NULL);
   }
 
 }

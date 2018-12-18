@@ -19,13 +19,14 @@
 #define LETTRE_CODE 'a'
 #define NB_ARTICLE 10
 #define LETTRE_CODE_SEM 'z'
-enum type{
+enum type1{
     TYPE_C = 1,
     TYPE_P = 2,
     TYPE_E = 3
 };
 typedef struct {
-    long type;
+    long type; //numero archiviste
+    int type_me;
     int identite;
     int nb_archiviste;
     pid_t pid;
