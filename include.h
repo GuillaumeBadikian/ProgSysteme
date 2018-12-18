@@ -12,10 +12,32 @@
 #include <sys/msg.h>
 #include <signal.h>
 #include <time.h>
+#include <string.h>
 
 
 #define FICHIER_CLE "cle.serv"
 #define LETTRE_CODE 'a'
+#define NB_ARTICLE 10
+#define LETTRE_CODE_SEM 'z'
+enum type{
+    TYPE_C = 1,
+    TYPE_P = 2,
+    TYPE_E = 3
+};
+typedef struct {
+    long type;
+    int identite;
+    int nb_archiviste;
+    pid_t pid;
+    char txt[4];
+} requete_t;
+
+typedef struct{
+    long identite; //expediteur
+    int type; //consult ..
+    pid_t pid;
+    
+}traitement_t;
 
 
 /* Couleurs dans xterm */

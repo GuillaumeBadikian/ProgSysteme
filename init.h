@@ -8,8 +8,8 @@ void usage(char * s);
 int arg_valid(int argv1, int  argv2);
 void creer_IPC(int argv1, int  argv2);
 void mon_sigaction(int signal, void (*f)(int));
-void arret(int i);
-
+void arret();
+void delete_smp(int nb_article,int nb_theme);
 
 
 #endif

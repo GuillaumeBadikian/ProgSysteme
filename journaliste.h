@@ -4,8 +4,7 @@
 #include "include.h"
 
 void usage(char * s);
-
-
+void recup_IPC();
 
 
 #endif
